@@ -33,7 +33,7 @@ print(x,y,nw,nh)
 
 R=cv2.getRotationMatrix2D((w/2,h/2), deg, 1)
 R[0,2]+=nw/2-w/2
-R[1,2]=nh/2-h/w
+R[1,2]+=nh/2-h/2
 
 print(R)
 
