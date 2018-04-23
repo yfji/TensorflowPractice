@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Apr 22 14:33:59 2018
-
 @author: JYF
 """
 
@@ -13,7 +12,9 @@ import data_loader as dl
 num_classes=2
 num_samples=2000
 centers={'0':[[1.,1.],[5.,4.]],'1':[[1.,4.],[5.,1.]]}
-dataset, labels=dl.load_data(num_clusters=4, sample_size=num_samples,centers=centers)
+cov_mat=np.asarray([[0.1,0.05],[0.05,0.1]])
+
+dataset, labels=dl.load_data(num_clusters=4, sample_size=num_samples,centers=centers, cov_mat=cov_mat)
 
 batch_size=16
 max_iter=8000
@@ -30,6 +31,7 @@ random_order=np.random.permutation(np.arange(num_samples))
 
 with tf.device('/cpu:0'):
     tf.reset_default_graph()
+    
     base_lr=tf.placeholder(tf.float32)
     cur_step=tf.placeholder(tf.float32)
     decay_steps=tf.placeholder(tf.float32)
@@ -68,7 +70,7 @@ with tf.device('/cpu:0'):
             one_hots=np.zeros((batch_size,num_classes),dtype=np.int32)
             for k in range(one_hots.shape[0]):
                 one_hots[k,ys[k]]=1
-
+            #learning rate decay
             rate=sess.run(lr_decay,feed_dict={base_lr:lr,cur_step:step,decay_steps:g_steps})
             _loss,_=sess.run([loss,optimizer], feed_dict={tensor_in:xs, batch_labels:one_hots, exp_lr:rate})
             
@@ -95,5 +97,3 @@ with tf.device('/cpu:0'):
         print('done')
 
 dl.visualize(dataset, labels)
-
-            
