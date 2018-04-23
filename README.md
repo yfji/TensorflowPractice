@@ -12,7 +12,6 @@ TensorflowPractice
 
 ## MLP
 This code implements the basic mlp network for classification
-----
 * train
   You need to run train.py. The script first runs data_loader to generate training data, then learns 
   the parameters. The result will be saved as checkpoint in models/
@@ -22,4 +21,3 @@ This code implements the basic mlp network for classification
 
 ## FashionAI
 This code implements the Fashion AI mission for clothes keypoint detection
-----
