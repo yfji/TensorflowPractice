@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Apr 22 13:46:34 2018
-
 @author: JYF
 """
 
@@ -22,10 +21,23 @@ class MLP:
                                 initializer=tf.constant_initializer(0.0))
         else:
             reader = tf.train.NewCheckpointReader(ckpt_path)  
-            var_to_shape_map = reader.get_variable_to_shape_map()  
+            var_to_shape_map = reader.get_variable_to_shape_map()
+            self.sizes_=[]
             for key in var_to_shape_map:  
-                print(key)
-
+#                print(key,var_to_shape_map[key])
+                names=key.split('/')
+                layer_name=names[0]
+                var_name=names[1]
+                var_shape=var_to_shape_map[key]
+                with tf.variable_scope(layer_name):
+                    layer_index=int(layer_name[1:])
+                    if layer_index not in self.sizes_:
+                        self.sizes_.append(layer_index)
+                    self.params_['%s%d'%(var_name,layer_index)]=tf.get_variable(var_name, shape=var_shape, dtype=np.float32)
+                    if 'w' in var_name:
+                        for i in range(len(var_shape)):
+                            if var_shape[i] not in self.sizes_:
+                                self.sizes_.append(var_shape[i])
                 
     def net(self, batch):
         data=batch
@@ -35,6 +47,3 @@ class MLP:
             if i<len(self.sizes_)-1:
                 data=tf.nn.relu(data)
         return data
-        
-        
-        
