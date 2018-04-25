@@ -24,20 +24,22 @@ class MLP:
             var_to_shape_map = reader.get_variable_to_shape_map()
             self.sizes_=[]
             for key in var_to_shape_map:  
-#                print(key,var_to_shape_map[key])
+                print(key,var_to_shape_map[key])
                 names=key.split('/')
                 layer_name=names[0]
                 var_name=names[1]
                 var_shape=var_to_shape_map[key]
                 with tf.variable_scope(layer_name):
                     layer_index=int(layer_name[1:])
-                    if layer_index not in self.sizes_:
-                        self.sizes_.append(layer_index)
+#                    if layer_index not in self.sizes_:
+#                        self.sizes_.append(layer_index)
                     self.params_['%s%d'%(var_name,layer_index)]=tf.get_variable(var_name, shape=var_shape, dtype=np.float32)
                     if 'w' in var_name:
-                        for i in range(len(var_shape)):
-                            if var_shape[i] not in self.sizes_:
-                                self.sizes_.append(var_shape[i])
+                        if len(self.sizes_)==0:
+                            self.sizes_=[var_shape[0],var_shape[1]]
+                        else:
+                            self.sizes_.append(var_shape[1])
+            print(self.sizes_)
                 
     def net(self, batch):
         data=batch
